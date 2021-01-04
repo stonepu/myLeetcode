@@ -64,9 +64,10 @@ public class T96 {
     public static void main(String[] args) {
         T96 t96 = new T96();
 //        t96.test();
-        Deque<Integer> list = new ArrayDeque<>();
+        Deque<Integer> list = new LinkedList<>();
         list.push(1);
         list.push(2);
+        list.poll();
         System.out.println(list.pop());
         System.out.println(Integer.MIN_VALUE);
         System.out.println(t96.numTrees(3));
