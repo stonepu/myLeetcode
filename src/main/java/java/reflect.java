@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 
 public class reflect {
 
+    void test3(){}
+
     final void test(){}
 
     final void test(int a){}
