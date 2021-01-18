@@ -2,6 +2,7 @@ package leetCode;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class T76 {
     public String minWindow(String s, String t) {
@@ -46,6 +47,13 @@ public class T76 {
 
     public static void main(String[] args) {
         T76 t76 = new T76();
+        int i = Integer.bitCount(8);
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        for(Map.Entry entry : hashMap.entrySet()){
+            entry.getKey();
+            entry.getKey();
+        }
+        System.out.println(i);
         System.out.println(t76.minWindow("aa", "aa"));
     }
 }
