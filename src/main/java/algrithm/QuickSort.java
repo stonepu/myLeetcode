@@ -1,6 +1,8 @@
 package algrithm;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class QuickSort {
     public void quickSort(int[] nums, int head, int tail, int k) {
@@ -44,8 +46,34 @@ public class QuickSort {
         QuickSort quickSort = new QuickSort();
         int[] arr = {7,6,5,4,3,2,1};
 
-        System.out.println(quickSort.quickSort(arr, 5));
+//        System.out.println(quickSort.quickSort(arr, 5));
 
+        quickSort.sort(arr);
         System.out.println(Arrays.toString(arr));
+    }
+
+
+    void sort(int[] arr) {
+        quickSort1(arr, 0, arr.length - 1);
+    }
+
+    void quickSort1(int[] arr, int head, int tail) {
+        if(head >= tail) return;
+        int tmpHead = head, tmpTail = tail;
+        while(tmpHead < tmpTail){
+            while(arr[tmpHead] < arr[tail] && tmpHead < tmpTail) {
+                ++tmpHead;
+            }
+
+            while(arr[tmpTail] >= arr[tail] && tmpHead < tmpTail) {
+                --tmpTail;
+            }
+            if(tmpHead == tmpTail) break;
+            swap(arr, tmpHead, tmpTail);
+
+        }
+        swap(arr, tmpHead, tail);
+        quickSort1(arr, head, tmpHead - 1);
+        quickSort1(arr, tmpHead + 1, tail);
     }
 }
