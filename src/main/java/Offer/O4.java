@@ -2,43 +2,35 @@ package Offer;
 
 public class O4 {
     public boolean findNumberIn2DArray(int[][] matrix, int target) {
-        if(matrix.length == 0 || matrix[0].length == 0) return false;
-        int m = matrix.length - 1, n = matrix[0].length - 1;
-        if(target > matrix[m][n]) return false;
-        if(target == matrix[m][n]) return true;
-        int i = 0, j = 0;
-        while(true) {
-            if(target == matrix[i][j]) return true;
-            if(target > matrix[i][j]){
-                i = i >= m ? m : i+1;
-                j = j >= n ? n : j+1;
-                continue;
+        int row = matrix.length;
+        if(row == 0) return false;
+        int col = matrix[0].length;
+        if(col == 0) return false;
+        int currVal;
+        int colIdx = 0;
+        int rowIdx = row - 1;
+        while(rowIdx >= 0 && colIdx < col) {
+            currVal = matrix[rowIdx][colIdx];
+            if(currVal == target) return true;
+            else if(target > currVal) {
+                ++colIdx;
+            }else{
+                --rowIdx;
             }
-
-            if(target == matrix[i][0]) return true;
-            else if(target > matrix[i][0]){
-                for(int y = 0; y < j; y++) {
-                    if(matrix[i][y] == target) return true;
-                    else if(matrix[i][y] > target) break;
-                }
-            }
-
-            if(target == matrix[0][j]) return true;
-            else if(target > matrix[0][j]) {
-                for(int x = 0; x < i; x++) {
-                    if(matrix[x][j] == target) return true;
-                    else if(matrix[x][j] > target) break;
-                }
-            }
-
-            return false;
         }
+        return false;
     }
 
 
     public static void main(String[] args) {
         O4 o4 = new O4();
-        int[][] arr = {{1, 4}, {2, 5}};
-        System.out.println(o4.findNumberIn2DArray(arr, 2));
+        int[][] arr = {
+  {1,   4,  7, 11, 15},
+  {2,   5,  8, 12, 19},
+  {3,   6,  9, 16, 22},
+  {10, 13, 14, 17, 24},
+  {18, 21, 23, 26, 30}
+    };
+        System.out.println(o4.findNumberIn2DArray(arr, 5));
     }
 }
