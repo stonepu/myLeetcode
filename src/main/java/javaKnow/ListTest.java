@@ -1,6 +1,9 @@
 package javaKnow;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class ListTest {
 
@@ -14,7 +17,20 @@ public class ListTest {
         list2.iterator();
 
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        List<String> list1 = new ArrayList<>();
+        int[] array = list.stream().mapToInt(Integer::valueOf).toArray();
+        System.out.println(list.getClass() == list1.getClass());
+        Method add = list1.getClass().getMethod("add", Object.class);
+        add.invoke(list1, 123);
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        hashMap.size();
+        System.out.println(list1);
 
+        String str = "123";
+        Method method = str.getClass().getMethod("length");
+        System.out.println(method.invoke(str));
     }
 }
