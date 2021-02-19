@@ -21,6 +21,21 @@ public class TreadPoolTest {
         }
     }
 
+    public static void test2() {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
+        scheduledExecutorService.schedule(()->{
+
+        }, 1, TimeUnit.SECONDS);
+
+        scheduledExecutorService.scheduleAtFixedRate(()->{
+
+        }, 0, 1, TimeUnit.SECONDS);
+
+        scheduledExecutorService.scheduleWithFixedDelay(()->{
+
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+
     public static void main(String[] args) {
         test1();
     }

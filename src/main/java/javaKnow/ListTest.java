@@ -17,6 +17,12 @@ public class ListTest {
         list2.iterator();
 
     }
+
+    public static void test2(){
+        Deque<Integer> list = new LinkedList<>();
+        list.addLast(2);
+    }
+
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Integer> list = new ArrayList<>();
         list.add(1);

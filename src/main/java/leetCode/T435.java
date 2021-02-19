@@ -240,39 +240,27 @@ public class T435 {
 
     public void quickSort(int[] arr, int first, int last) {
         if (first >= last) return;
-        int mid = last, head = first, tail = last;
+        int head = first, tail = last;
         while (head < tail) {
             while (head < tail) {
-                if (arr[head] > arr[mid]) {
+                if (arr[head] > arr[last]) {
                     break;
                 }
                 ++head;
             }
 
             while (tail > head) {
-                if (arr[tail] < arr[mid]) break;
+                if (arr[tail] < arr[last]) break;
                 --tail;
             }
 
             if (tail == head) break;
-            exchange(arr, tail--, head++);
+            exchange(arr, tail, head);
         }
 
-        if (head == tail) {
-            if (arr[head] == arr[last]) mid = tail;
-            else if (arr[head] > arr[last]) {
-                exchange(arr, last, head);
-                mid = head;
-            } else {
-                exchange(arr, last, head + 1);
-                mid = head + 1;
-            }
-        } else {
-            mid = tail + 1;
-            exchange(arr, tail + 1, last);
-        }
-        quickSort(arr, first, mid - 1);
-        quickSort(arr, mid + 1, last);
+        exchange(arr, tail, last);
+        quickSort(arr, first, head - 1);
+        quickSort(arr, head + 1, last);
     }
 
     public void mergeSort(int[] dst) {

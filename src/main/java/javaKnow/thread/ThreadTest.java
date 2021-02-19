@@ -2,10 +2,11 @@ package javaKnow.thread;
 
 import sun.awt.windows.ThemeReader;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 
 public class ThreadTest {
-    public static void test(){
+    public static void test() throws InterruptedException {
         Object o = new Object();
         synchronized (o) {
             o.notifyAll();
@@ -15,6 +16,8 @@ public class ThreadTest {
         Thread t = new Thread(()->{
             System.out.println("a new thread");
         });
+        t.getState();
+        TimeUnit.SECONDS.sleep(1);
         LockSupport.park();
     }
 
@@ -93,9 +96,18 @@ public class ThreadTest {
         System.out.println(Thread.interrupted());
     }
 
+    public static void test5(){
+        Object o = new Object();
+        synchronized (o){
+            System.out.println("lock");
+        }
+    }
+
+    public static void test6() {
+        LockSupport.park();
+    }
+
     public static void main(String[] args) {
-//        test2();
-//        test3();
-        test4();
+        test5();
     }
 }
