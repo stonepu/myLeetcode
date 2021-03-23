@@ -9,6 +9,16 @@ public class TreadPoolTest {
         ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 5, 60,
                 TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5), Executors.defaultThreadFactory());
 //        pool.setRejectedExecutionHandler();
+        Future<?> submit = pool.submit(() -> {
+
+        });
+        try {
+            submit.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();

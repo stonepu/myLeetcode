@@ -1,25 +1,51 @@
 package javaKnow.thread;
 
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class reentrantLock {
-    public static void test1(){
+    public static void test1() {
         ReentrantLock locke = new ReentrantLock(false);
         locke.lock();
-        try{
+        try {
             LockSupport.park();
 
-        }finally {
+        } finally {
+            locke.unlock();
+        }
+
+//        CyclicBarrier;
+    }
+
+    public static void test2() {
+        ReentrantLock locke = new ReentrantLock(false);
+        try {
+            locke.lockInterruptibly();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             locke.unlock();
         }
     }
 
-    public static void test2(){
+    public static void test3() {
+        ReentrantLock locke = new ReentrantLock(false);
+        if (!locke.tryLock()) {
+            return;
+        }
+
+        locke.unlock();
+    }
+
+    public static void test4() {
         ReentrantLock locke = new ReentrantLock(false);
         try {
-            locke.lockInterruptibly();
+            if (!locke.tryLock(1, TimeUnit.SECONDS)) return;
         } catch (InterruptedException e) {
             e.printStackTrace();
             return;
@@ -28,30 +54,11 @@ public class reentrantLock {
         }
     }
 
-    public static void test3(){
-        ReentrantLock locke = new ReentrantLock(false);
-        if(!locke.tryLock()) return;
-
-        locke.unlock();
-    }
-
-    public static void test4(){
-        ReentrantLock locke = new ReentrantLock(false);
-        try {
-            if(!locke.tryLock(1, TimeUnit.SECONDS)) return;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return;
-        }finally {
-            locke.unlock();
-        }
-    }
-
 
     public static void main(String[] args) {
 //        test1();
 
-        Test1 a = ()->{
+        Test1 a = () -> {
             System.out.println("aaa");
         };
         a.print();
@@ -59,9 +66,11 @@ public class reentrantLock {
 }
 
 @FunctionalInterface
-interface Test1{
+interface Test1 {
     void print();
-    default void t(){}
+
+    default void t() {
+    }
 }
 
 

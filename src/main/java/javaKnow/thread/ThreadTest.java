@@ -2,6 +2,7 @@ package javaKnow.thread;
 
 import sun.awt.windows.ThemeReader;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 
@@ -107,7 +108,30 @@ public class ThreadTest {
         LockSupport.park();
     }
 
+    public static void test7() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("hello");
+            }
+        }).start();
+    }
+
+    public static void test8() {
+        new Thread(()->
+                System.out.println("hello2")
+        ).start();
+    }
+
+    public static void test9() {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("s");
+    }
+
     public static void main(String[] args) {
-        test5();
+        test7();
+        test8();
+//        new Object().wait();
+        
     }
 }
