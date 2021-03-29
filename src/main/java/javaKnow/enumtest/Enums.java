@@ -6,7 +6,11 @@ interface Info{
     void show();
 }
 
+
 enum E{
+    /**
+     *
+     */
     o1;
     private E(){
 
@@ -16,6 +20,9 @@ enum E{
 
 public enum Enums implements Info{
 
+    /**
+     *
+     */
     o1(1, "1"){
         @Override
         public void show() {
