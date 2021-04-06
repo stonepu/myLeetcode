@@ -24,7 +24,9 @@ public class QuickSort {
 
         swap(nums, tmpH, tail);
 
-        if(tmpH == nums.length - k) return;
+        if(tmpH == nums.length - k) {
+            return;
+        }
         else{
             quickSort(nums, head, tmpH - 1, k);
             quickSort(nums, tmpH + 1, tail, k);
@@ -68,7 +70,9 @@ public class QuickSort {
             while(arr[tmpTail] >= arr[tail] && tmpHead < tmpTail) {
                 --tmpTail;
             }
-            if(tmpHead == tmpTail) break;
+            if(tmpHead == tmpTail) {
+                break;
+            }
             swap(arr, tmpHead, tmpTail);
 
         }

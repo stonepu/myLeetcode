@@ -1,5 +1,8 @@
 package leetCode.newhot;
 
+import javaKnow.load.M;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class HotTest {
@@ -295,6 +298,13 @@ class T5 {
  * "*"考虑的不全面，*可能会让前面的字符消失
  */
 class T10 {
+    /**
+     * 时间复杂度O(n^2)，空间复杂度O(n^2)。不容易不容易，做了几天，特殊情况还是要多考虑清楚
+     *
+     * @param s
+     * @param p
+     * @return
+     */
     public boolean isMatch(String s, String p) {
 
         int index = 0;
@@ -314,18 +324,40 @@ class T10 {
             return false;
         }
 
-
-        if (p.charAt(0) != s.charAt(0) && p.charAt(0) >= 'a' && p.charAt(0) <= 'z') {
-            return false;
+        if (sLen == 0) {
+            int alpha = 0;
+            for (int i = 0; i < pLen; i++) {
+                if (p.charAt(i) == '*') {
+                    alpha = Math.max(0, alpha - 1);
+                } else {
+                    ++alpha;
+                }
+            }
+            return alpha == 0;
         }
 
+
         boolean[][] dp = new boolean[pLen][sLen];
-        dp[0][0] = true;
+        dp[0][0] = p.charAt(0) == '.' || (p.charAt(0) == s.charAt(0));
 
-
-        for (int i = 1; i < pLen && dp[i - 1][0]; i++) {
-            if (dp[i - 1][0] && p.charAt(i) == '*') {
+        int alphaNum = 0;
+        if (p.charAt(0) == '.' || (p.charAt(0) >= 'a' && p.charAt(0) <= 'z')) {
+            alphaNum = 1;
+        }
+        for (int i = 1; i < pLen; i++) {
+            char ch = p.charAt(i);
+            if ((ch == '.' || ch == s.charAt(0)) && alphaNum == 0) {
                 dp[i][0] = true;
+            }
+            if (ch == '*') {
+                alphaNum = Math.max(0, alphaNum - 1);
+                if (dp[i - 1][0] || (i > 1 && dp[i - 2][0])) {
+                    dp[i][0] = true;
+                }
+            }
+
+            if (ch == '.' || (ch >= 'a' && ch <= 'z')) {
+                alphaNum++;
             }
         }
 
@@ -334,17 +366,19 @@ class T10 {
             for (int j = 1; j < sLen; j++) {
                 if (dp[i - 1][j - 1] && (p.charAt(i) == s.charAt(j) || p.charAt(i) == '.')) {
                     dp[i][j] = true;
-                } else if (dp[i - 1][j] && p.charAt(i) == '*') {
+                } else if (p.charAt(i) == '*' && (dp[i - 1][j] || (i > 1 && dp[i - 2][j]))) {
                     dp[i][j] = true;
                 } else if (dp[i - 1][j - 1] && p.charAt(i) == '*' && s.charAt(j) == s.charAt(j - 1)) {
                     dp[i][j] = true;
-                } else if (dp[i - 1][j - 1] && p.charAt(i - 1) == '.' && p.charAt(i) == '*') {
+                } else if ((dp[i - 1][j - 1] || dp[i][j - 1]) && p.charAt(i - 1) == '.' && p.charAt(i) == '*') {
                     dp[i][j] = true;
                 }
             }
         }
 
-
+        for (boolean[] booleans : dp) {
+            System.out.println(Arrays.toString(booleans));
+        }
         return dp[pLen - 1][sLen - 1];
     }
 
@@ -352,7 +386,14 @@ class T10 {
 //        boolean[] d = new boolean[1];
 //        System.out.println(d[0]);
         T10 t10 = new T10();
-        System.out.println(t10.isMatch("ab", "a*"));
+//        System.out.println(t10.isMatch("ab", "a*"));
+//        System.out.println(t10.isMatch("aa", "c*aa"));
+        System.out.println(t10.isMatch("aaa", "ab*ac*a"));
+        System.out.println(t10.isMatch("aaa", ".*"));
+
+//        String s1 = "abc**a"; //error
+//        String s2 = "aa";
+//        System.out.println(s2.matches(s1));
     }
 
 }
@@ -482,6 +523,7 @@ class T17 {
 
     /**
      * 时间复杂度O(3^n)，空间复杂度O(n)
+     *
      * @param digits
      * @return
      */
@@ -519,6 +561,7 @@ class T19 {
     /**
      * 时间复杂度O(n)，空间复杂度O(n)，满足最后的要求，只遍历一次，但是空间复杂度可以继续优化，
      * 可以考虑双指针，中间的距离就为n，当快的节点遍历到尾部时即停止
+     *
      * @param head
      * @param n
      * @return
@@ -552,3 +595,474 @@ class T19 {
 
 }
 
+/**
+ * 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+ * <p>
+ * 有效字符串需满足：
+ * <p>
+ * 左括号必须用相同类型的右括号闭合。
+ * 左括号必须以正确的顺序闭合。
+ */
+class T20 {
+    public boolean isValid(String s) {
+        Deque<Character> stack = new LinkedList<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+
+            if (ch == '[' || ch == '{' || ch == '(') {
+                stack.addLast(ch);
+            } else {
+                if (ch == '}') {
+                    if (stack.isEmpty() || stack.peekLast() != '{') {
+                        return false;
+                    } else {
+                        stack.pollLast();
+                    }
+                } else if (ch == ']') {
+                    if (stack.isEmpty() || stack.peekLast() != '[') {
+                        return false;
+                    } else {
+                        stack.pollLast();
+                    }
+                } else {
+                    if (stack.isEmpty() || stack.peekLast() != '(') {
+                        return false;
+                    } else {
+                        stack.pollLast();
+                    }
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+
+/**
+ * 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+ */
+class T21 {
+    /**
+     * 时间复杂度O(n)，空间复杂度O(1)
+     *
+     * @param l1
+     * @param l2
+     * @return
+     */
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null) {
+            return l2;
+        }
+
+        if (l2 == null) {
+            return l1;
+        }
+
+        ListNode head = new ListNode(-1);
+        ListNode tmp = head;
+        while (l1 != null && l2 != null) {
+            if (l1.val > l2.val) {
+                tmp.next = l2;
+                l2 = l2.next;
+            } else {
+                tmp.next = l1;
+                l1 = l1.next;
+            }
+            tmp = tmp.next;
+        }
+
+        while (l1 != null) {
+            tmp.next = l1;
+            tmp = tmp.next;
+            l1 = l1.next;
+        }
+
+        while (l2 != null) {
+            tmp.next = l2;
+            l2 = l2.next;
+            tmp = tmp.next;
+        }
+        return head.next;
+    }
+}
+
+/**
+ * 数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+ */
+class T22 {
+    List<String> rst = new LinkedList<>();
+
+    /**
+     * 时间复杂度O(4^n/n^0.5)，空间复杂度O(n)
+     *
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis(int n) {
+        addItem(new StringBuffer(), n, n);
+        return rst;
+    }
+
+    private void addItem(StringBuffer sb, int left, int right) {
+        if (left == 0 && right == 0) {
+            rst.add(sb.toString());
+        }
+
+        if (left > 0) {
+            sb.append('(');
+            addItem(sb, left - 1, right);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        if (right > left) {
+            sb.append(')');
+            addItem(sb, left, right - 1);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    public static void main(String[] args) {
+        T22 t22 = new T22();
+        System.out.println(t22.generateParenthesis(3));
+    }
+}
+
+/**
+ * 给你一个链表数组，每个链表都已经按升序排列。
+ * <p>
+ * 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+ */
+class T23 {
+    /**
+     * 时间复杂度O(n*max(li))，空间复杂度O(1)
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode head = new ListNode(-1);
+        ListNode tmp = head;
+        while (true) {
+            int index = -1;
+            ListNode currMin = null;
+            for (int i = 0; i < lists.length; i++) {
+                if(lists[i] != null) {
+                    if(currMin == null || currMin.val > lists[i].val) {
+                        currMin = lists[i];
+                        index = i;
+                    }
+                }
+            }
+
+            if(index == -1) {
+                break;
+            }
+            tmp.next = currMin;
+            tmp = tmp.next;
+            lists[index] = lists[index].next;
+        }
+
+        return head.next;
+    }
+
+    /**
+     * 时间复杂度O(n*max(li))，空间复杂度O(n)
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists1(ListNode[] lists) {
+        HashMap<Integer, ListNode> map = new HashMap<>();
+
+        int idx = 0;
+        for (ListNode list : lists) {
+            if (list != null) {
+                map.put(idx++, list);
+            }
+        }
+        ListNode head = new ListNode(-1);
+        ListNode tmp = head;
+        while (!map.isEmpty()) {
+            int index = -1;
+            ListNode currMin = null;
+            Iterator<Integer> iterator = map.keySet().iterator();
+            while(iterator.hasNext()) {
+                int i = iterator.next();
+                if(map.get(i) == null) {
+                    iterator.remove();
+                }
+                else if (currMin == null || currMin.val > map.get(i).val) {
+                    currMin = map.get(i);
+                    index = i;
+                }
+            }
+
+            if(index == -1) {
+                continue;
+            }
+            tmp.next = currMin;
+            tmp = tmp.next;
+            map.put(index, map.get(index).next);
+        }
+
+        return head.next;
+
+    }
+
+    /**
+     * 时间复杂度O(llog(l))，空间复杂度O(l)，l为所有数组中元素的和
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists2(ListNode[] lists){
+        ListNode head = new ListNode(-1);
+        ListNode tmp = head;
+        int len = 0;
+        for (ListNode list : lists) {
+            while (list != null) {
+                tmp.next = list;
+                tmp = tmp.next;
+                ++len;
+                list = list.next;
+            }
+        }
+
+        if(len == 0) {
+            return null;
+        }
+
+        ListNode[] arr = new ListNode[len];
+        tmp = head;
+        for (int i = 0; i < len; i++) {
+            arr[i] = tmp.next;
+            tmp = tmp.next;
+        }
+
+        System.out.println(Arrays.toString(arr));
+
+        quickSort(arr, 0, len - 1);
+        System.out.println(Arrays.toString(arr));
+
+
+        return arr[0];
+    }
+
+    private void quickSort(ListNode[] arr, int left, int right) {
+        if(left >= right) {
+            return;
+        }
+
+        int head = left, tail = right;
+        while(head < tail) {
+            while(head < tail && arr[head].val < arr[right].val){
+                ++head;
+            }
+
+            while(head < tail && arr[tail].val >= arr[right].val) {
+                --tail;
+            }
+
+            if(head == tail) {
+                break;
+            }
+
+            swap(arr, head, tail);
+        }
+
+        swap(arr, head, right);
+        quickSort(arr, left, head - 1);
+        quickSort(arr, head + 1, right);
+    }
+
+    private void swap(ListNode[] arr, int p, int q) {
+        if(p == q) {
+            return;
+        }
+        int min = Math.min(p, q);
+        int max = p + q - min;
+
+        ListNode tmp = arr[min];
+        arr[min] = arr[max];
+        arr[max] = tmp;
+
+        arr[min].next = arr[min + 1];
+        if(min != 0) {
+            arr[min - 1].next = arr[min];
+        }
+
+        arr[max - 1].next = arr[max];
+        if(max < arr.length - 1) {
+            arr[max].next = arr[max + 1];
+        }else{
+            arr[max].next = null;
+        }
+    }
+
+    public static void main(String[] args) {
+//        HashMap<Integer, Integer> map = new HashMap<>();
+//        for (int i = 0; i < 5; i++) {
+//            map.put(i, i);
+//        }
+//
+//        Iterator<Integer> iterator = map.keySet().iterator();
+//        int index = -1;
+//        while(iterator.hasNext()) {
+//            int i = iterator.next();
+//            if(i == 1) {
+//                iterator.remove();
+//            }
+//
+//            if(i == 3) {
+//                iterator.remove();
+//            }
+//
+//            System.out.println(i + " => " + map.get(i));
+//        }
+//        for (int i = 0; i < 5; i++) {
+//            System.out.println("after: " + i + " => " + map.get(i));
+//        }
+
+        T23 t23 = new T23();
+        int[] a1 = {1, 4 ,5};
+        int[] a2 = {1, 3, 4};
+        int[] a3 = {2, 6};
+        ListNode[] arr = {ListNode.generateList(a1), ListNode.generateList(a2), ListNode.generateList(a3)};
+        t23.mergeKLists2(arr);
+    }
+}
+
+/**
+ * 实现获取 下一个排列 的函数，算法需要将给定数字序列重新排列成字典序中下一个更大的排列。
+ *
+ * 如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+ *
+ * 必须 原地 修改，只允许使用额外常数空间。
+ *
+ * 来源：力扣（LeetCode）
+ * 链接：https://leetcode-cn.com/problems/next-permutation
+ * 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class T31{
+    /**
+     * 时间复杂度O(n)，空间复杂度O(1)
+     * @param nums
+     */
+    public void nextPermutation(int[] nums) {
+        int first = -1;
+        int len = nums.length;
+        for (int i = len - 1; i > 0; i--) {
+            if(nums[i] > nums[i - 1]){
+                first = i - 1;
+                break;
+            }
+        }
+
+        if(first == -1) {
+            reverse(nums, 0, len - 1);
+            return;
+        }
+        int second = -1;
+        for (int i = len - 1; i >= 0; i--) {
+            if(nums[i] > nums[first]) {
+                second = i;
+                break;
+            }
+        }
+
+        swap(nums, first, second);
+        reverse(nums, first + 1, len - 1);
+    }
+
+    public void reverse(int[] nums, int start, int end){
+        while(start < end) {
+            swap(nums, start, end);
+            start++;
+            end--;
+        }
+    }
+
+    public void swap(int[] nums, int p, int q) {
+        int tmp = nums[p];
+        nums[p] = nums[q];
+        nums[q] = tmp;
+    }
+}
+
+/**
+ * 给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+ */
+class T32{
+    public int longestValidParentheses(String s) {
+
+        int[] dp = new int[s.length()];
+        Deque<Integer> stack = new LinkedList<>();
+        int rst = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '(') {
+                stack.addLast(i);
+            }else{
+                if(!stack.isEmpty()) {
+                    dp[i] = i - stack.peekLast() + 1 + dp[Math.max(stack.pollLast() - 1, 0)];
+                    rst = Math.max(rst, dp[i]);
+                }
+            }
+        }
+
+        return rst;
+    }
+}
+
+/**
+ * 整数数组 nums 按升序排列，数组中的值 互不相同 。
+ *
+ * 在传递给函数之前，nums 在预先未知的某个下标 k（0 <= k < nums.length）上进行了 旋转，使数组变为 [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]（下标 从 0 开始 计数）。例如， [0,1,2,4,5,6,7] 在下标 3 处经旋转后可能变为 [4,5,6,7,0,1,2] 。
+ *
+ * 给你 旋转后 的数组 nums 和一个整数 target ，如果 nums 中存在这个目标值 target ，则返回它的索引，否则返回 -1 。
+ *
+ * 来源：力扣（LeetCode）
+ * 链接：https://leetcode-cn.com/problems/search-in-rotated-sorted-array
+ * 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class T33{
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            if(nums[mid] == target) {
+                return mid;
+            }
+            else if(nums[mid] > target) {
+                if(target > nums[left]) {
+                    right = mid - 1;
+                }else if(target< nums[left]){
+                    if(nums[mid] >= nums[left]) {
+                        left = mid + 1;
+                    }else{
+                        right = mid - 1;
+                    }
+                }else{
+                    return left;
+                }
+
+            }else{
+                if(target <= nums[right]) {
+                    left = mid + 1;
+                }else {
+                    if(nums[mid] >= nums[left]) {
+                        left = mid + 1;
+                    }else{
+                        right = mid - 1;
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        T33 t33 = new T33();
+        int[] arr = {4,5,6,7,0,1,2};
+        System.out.println(t33.search(arr, 5));
+    }
+
+}
